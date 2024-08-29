@@ -1,0 +1,13 @@
+name: GuildPlugin
+version: '${project.version}'
+main: com.sironeko.guildplugin.GuildPlugin
+api-version: '1.21'
+
+permissions:
+  master:
+    description: "ギルドマスター権限"
+    default: "op"
+
+  R4:
+    description: "幹部権限"
+    default: "op"
