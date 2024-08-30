@@ -1,3 +1,5 @@
+This plugin is under construction.
+
 Commands:
   /guild <create/join/leave>
 
