@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 
 public class GuildCommand implements CommandExecutor, TabCompleter {
-    public static List<String> suggest = new ArrayList<>();
     public static List<String> GuildName = new ArrayList<>();
 
     @Override
@@ -25,36 +24,52 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         }
 
         if(strings[0].equalsIgnoreCase("create")){
-            createCommand(commandSender, command, s, strings);
+            createCommand(commandSender, strings);
 
         } else if (strings[0].equalsIgnoreCase("join")) {
-            joinCommand(commandSender, command, s, strings);
+            joinCommand(commandSender, strings);
+        }else if(strings[0].equalsIgnoreCase("leave")){
+            leaveCommand(commandSender, strings);
         }
-
         return false;
     }
 
-    public void createCommand(CommandSender commandSender, Command command, String s, String[] strings){
+    public void createCommand(CommandSender commandSender, String[] strings){
         if(!commandSender.isOp()){
             commandSender.sendMessage(ChatColor.RED + "権限がありません");
         }
 
-        if(strings.length == 2){
-            String name = strings[1];
+        String name = strings[1];
 
+        if(strings.length == 2){
             if (GuildName.contains(name)){
                 commandSender.sendMessage(ChatColor.RED + "作成しようとしたギルド名はすでに使用されています");
+                return;
+            }
+        }
 
+        String joinName = strings[2];
+
+        if(strings.length == 3){
+            Player targetPlayer = Bukkit.getPlayer(joinName);
+            Set<String> target_tag = targetPlayer.getScoreboardTags();
+            target_tag.retainAll(GuildName);
+
+            targetPlayer.addScoreboardTag(name);
+
+            if(!target_tag.isEmpty()){
+                commandSender.sendMessage(ChatColor.RED + (targetPlayer.getName() + "はすでに他のギルドに所属しています"));
                 return;
             }
 
             GuildName.add(name);
+            targetPlayer.addScoreboardTag("master");
+            targetPlayer.addScoreboardTag(name);
             commandSender.sendMessage(ChatColor.GREEN + name + "が作成されました");
-
         }
     }
 
-    public void joinCommand(CommandSender commandSender, Command command, String s, String[] strings){
+    public void joinCommand(CommandSender commandSender, String[] strings){
         if(!(commandSender.hasPermission("master") || commandSender.hasPermission("R4"))){
             commandSender.sendMessage(ChatColor.RED + "権限がありません");
         }
@@ -68,12 +83,9 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             Set<String> target_tag = targetPlayer.getScoreboardTags();
 
             guild_tag.retainAll(GuildName);
+            target_tag.retainAll(GuildName);
 
-            if(guild_tag.isEmpty()){
-                commandSender.sendMessage(ChatColor.RED + "あなたはギルドに所属していません");
-
-                return;
-            }else if(!target_tag.isEmpty()){
+            if(!target_tag.isEmpty()){
                 commandSender.sendMessage(ChatColor.RED + (targetPlayer.getName() + "はすでに他のギルドに所属しています"));
                 return;
             }
@@ -84,12 +96,42 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         }
     }
 
+    public void leaveCommand(CommandSender commandSender, String[] strings){
+        if(!(commandSender.hasPermission("master") || commandSender.hasPermission("R4"))){
+            commandSender.sendMessage(ChatColor.RED + "権限がありません");
+
+            return;
+        }
+
+        if(strings.length < 2){
+            commandSender.sendMessage(ChatColor.RED + "コマンド引数が不足しています");
+        }
+
+        String pPlayer = strings[0];
+
+        if(strings.length == 2){
+            Player targetPlayer = Bukkit.getPlayer(pPlayer);
+            Set<String> tag = targetPlayer.getScoreboardTags();
+            tag.retainAll(GuildName);
+
+            if(!tag.isEmpty()){
+                for(String string: tag){
+                    targetPlayer.removeScoreboardTag(string);
+                }
+
+                if()
+            }
+        }
+    }
+
+
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
+        List<String> suggest = new ArrayList<>();
         if(strings.length == 1){
             suggest.add("join");
             suggest.add("create");
-        } else if (strings.length == 2) {
+        } else if ((strings.length == 2 && strings[0].equalsIgnoreCase("join")) || (strings.length == 3 && strings[0].equalsIgnoreCase("create"))) {
             for(Player player: Bukkit.getOnlinePlayers()){
                 suggest.add(player.getName());
             }

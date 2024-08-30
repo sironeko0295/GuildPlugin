@@ -1,5 +1,5 @@
 name: GuildPlugin
-version: '${project.version}'
+version: '1.0-SNAPSHOT'
 main: com.sironeko.guildplugin.GuildPlugin
 api-version: '1.21'
 
