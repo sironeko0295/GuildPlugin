@@ -1,5 +1,5 @@
 Commands:
-  /guild <create/join/leave/delete>
+  /guild[g] <create/join/leave/delete>
 
   create... create a new guild. </br>
   join... join to already a created guild. </br>
