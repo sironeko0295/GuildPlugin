@@ -1,8 +1,7 @@
-This plugin is under construction.
-
 Commands:
-  /guild <create/join/leave>
+  /guild <create/join/leave/delete>
 
   create... create a new guild. </br>
   join... join to already a created guild. </br>
-  leave... get out for guild.
+  leave... get out for guild.</br>
+  delete...delete for guild.
