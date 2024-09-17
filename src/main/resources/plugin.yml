@@ -5,8 +5,8 @@ api-version: '1.21'
 
 commands:
   guild:
-    description: ギルドの作成、参加
-    usage: /<command> <create/join>
+    description: ギルドの作成、参加、脱退、削除
+    usage: /<command> <create/join/leave/delete>
     aliases: [g]
 
 permissions:
